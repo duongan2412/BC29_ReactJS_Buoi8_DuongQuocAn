@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { UserManagementAction } from '../../Store/Reducers/Action/UserManagementAction';
+import { addUSerAction } from '../../Store/Reducers/Action/UserManagementAction';
 
 class RegisterForm extends Component {
     state = {
@@ -32,21 +32,30 @@ class RegisterForm extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        for (const key in this.state.error) {
+
+        for (let key in this.state.error) {
             const message = this.state.error[key];
+            // console.log(message);
             if (message) {
                 return;
             }
         }
 
-        this.props.dispatch(UserManagementAction(this.state.values))
+        for (let key in this.state.values) {
+            const value = this.state.values[key];
+            if (!value) {
+                return;
+            }
+        }
+
+        this.props.dispatch(addUSerAction(this.state.values))
     }
 
     handleBlur = (e) => {
         const { name, title, validity: { patternMismatch, valueMissing } } = e.target;
         let message = '';
         if (patternMismatch) {
-            message = `${title} không hợp lệ`
+            message = `${title} không hợp lệ.`
         }
         if (valueMissing) {
             message = `Vui lòng nhập ${title}.`
@@ -57,6 +66,7 @@ class RegisterForm extends Component {
                 [name]: message,
             }
         })
+        console.log(`${title} ${message}`);
     }
 
     render() {

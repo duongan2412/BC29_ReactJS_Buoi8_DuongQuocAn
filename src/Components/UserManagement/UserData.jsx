@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { selectedUserAction } from '../../Store/Reducers/Action/UserManagementAction';
+
 
 class UserData extends Component {
     renderDanhSachSV = () => {
         return this.props.userList.map((ele, idx) => {
             return (
-                <tr key={ele.maSV} className='bg-light'>
+                <tr key={ele.maSV} className=''>
                     <td>{idx + 1}</td>
                     <td>{ele.hoTen}</td>
                     <td>{ele.soDt}</td>
                     <td>{ele.email}</td>
                     <td>
-                        <button className="btn btn-info mr-2">EDIT</button>
+                        <button onClick={() => this.props.dispatch(selectedUserAction(ele))}
+                            className="btn btn-info mr-2">EDIT</button>
                         <button className="btn btn-danger">DELETE</button>
                     </td>
                 </tr>
@@ -32,15 +35,6 @@ class UserData extends Component {
                             />
                         </div>
                     </div>
-                    {/* <div className="col-3 ml-auto">
-                        <div className="form-group mb-0">
-                            <select className="form-control">
-                                <option>All</option>
-                                <option>Client</option>
-                                <option>Admin</option>
-                            </select>
-                        </div>
-                    </div> */}
                 </div>
                 <div className="card-body">
                     <table className="table">

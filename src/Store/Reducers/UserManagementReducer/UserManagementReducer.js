@@ -1,4 +1,4 @@
-import { ADD_USER } from "../Type/UserManagementType";
+import { ADD_USER, SELECTED_USER } from "../Type/UserManagementType";
 
 const DEFAULT_STATE = {
     userList: [
@@ -15,16 +15,22 @@ const DEFAULT_STATE = {
             email: "nguyenvanb@gmail.com",
         },
     ],
+    userSelected: null,
 }
 
 export const UserManagementReducer = (state = DEFAULT_STATE, { type, payload }) => {
     switch (type) {
 
-        case ADD_USER:
-            const data = [...state.userList, payload];
+        case ADD_USER: {
+            let data = [...state.userList, payload];
             state.userList = data;
-            return { ...state };
+            return { ...state }
+        }
 
+        case SELECTED_USER: {
+            state.userSelected = payload;
+            return { ...state }
+        }
         default:
             return state
     }
