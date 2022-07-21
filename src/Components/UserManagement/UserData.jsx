@@ -5,13 +5,15 @@ import { selectedUserAction } from '../../Store/Reducers/Action/UserManagementAc
 
 class UserData extends Component {
     renderDanhSachSV = () => {
+
         return this.props.userList.map((ele, idx) => {
+            const { maSV, hoTen, soDt, email } = ele;
             return (
-                <tr key={ele.maSV} className=''>
-                    <td>{idx + 1}</td>
-                    <td>{ele.hoTen}</td>
-                    <td>{ele.soDt}</td>
-                    <td>{ele.email}</td>
+                <tr key={idx} className=''>
+                    <td>{maSV}</td>
+                    <td>{hoTen}</td>
+                    <td>{soDt}</td>
+                    <td>{email}</td>
                     <td>
                         <button onClick={() => this.props.dispatch(selectedUserAction(ele))}
                             className="btn btn-info mr-2">EDIT</button>

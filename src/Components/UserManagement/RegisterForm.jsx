@@ -1,15 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import { addUSerAction } from '../../Store/Reducers/Action/UserManagementAction';
+import { addUserAction, updateUserAction } from '../../Store/Reducers/Action/UserManagementAction';
+
+const DEFAULT_VALUES = {
+    maSV: "",
+    hoTen: "",
+    soDt: "",
+    email: "",
+}
 
 class RegisterForm extends Component {
     state = {
-        values: {
-            maSV: "",
-            hoTen: "",
-            soDt: "",
-            email: "",
-        },
+        values: DEFAULT_VALUES,
         error: {
             maSV: "",
             hoTen: "",
@@ -17,6 +19,16 @@ class RegisterForm extends Component {
             email: "",
         },
     };
+
+    formRef = createRef();
+
+    static getDerivedStateFromProps(nextProps, currentState) {
+
+        if (nextProps.userSelected && currentState.values.maSV !== nextProps.userSelected.maSV) {
+            currentState.values = nextProps.userSelected;
+        }
+        return currentState
+    }
 
     handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,23 +44,19 @@ class RegisterForm extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+        // console.log(e.target.checkValidity());
 
-        for (let key in this.state.error) {
-            const message = this.state.error[key];
-            // console.log(message);
-            if (message) {
-                return;
-            }
+        if (!e.target.checkValidity()) {
+            return;
         }
 
-        for (let key in this.state.values) {
-            const value = this.state.values[key];
-            if (!value) {
-                return;
-            }
-        }
+        this.props.userSelected ? this.props.dispatch(updateUserAction(this.state.values)) : this.props.dispatch(addUserAction(this.state.values))
 
-        this.props.dispatch(addUSerAction(this.state.values))
+        this.setState({
+            values: DEFAULT_VALUES,
+        }, () => {
+            this.forceUpdate()
+        });
     }
 
     handleBlur = (e) => {
@@ -66,17 +74,18 @@ class RegisterForm extends Component {
                 [name]: message,
             }
         })
-        console.log(`${title} ${message}`);
+        // console.log(`${title} ${message}`);
     }
 
     render() {
+        const { maSV, hoTen, soDt, email } = this.state.values || {};
         return (
             <div className="card p-0">
                 <div className="card-header bg-warning text-white font-weight-bold">
                     THÔNG TIN SINH VIÊN
                 </div>
                 <div className="card-body">
-                    <form noValidate onSubmit={this.handleSubmit}>
+                    <form ref={this.formRef} noValidate onSubmit={this.handleSubmit}>
                         <div className="row">
                             <div className="col-6">
                                 <div className="form-group">
@@ -87,6 +96,7 @@ class RegisterForm extends Component {
                                         onBlur={this.handleBlur}
                                         required
                                         title="Mã sinh viên"
+                                        value={maSV}
                                         className="form-control" />
                                     {this.state.error.maSV && <span className='text-danger'>{this.state.error.maSV}</span>}
                                 </div>
@@ -100,6 +110,7 @@ class RegisterForm extends Component {
                                         onBlur={this.handleBlur}
                                         required
                                         title="Họ tên"
+                                        value={hoTen}
                                         className="form-control" />
                                     {this.state.error.hoTen && <span className='text-danger'>{this.state.error.hoTen}</span>}
                                 </div>
@@ -113,6 +124,7 @@ class RegisterForm extends Component {
                                         onBlur={this.handleBlur}
                                         required
                                         title="Số điện thoại"
+                                        value={soDt}
                                         className="form-control" />
                                     {this.state.error.soDt && <span className='text-danger'>{this.state.error.soDt}</span>}
                                 </div>
@@ -127,13 +139,14 @@ class RegisterForm extends Component {
                                         required
                                         title="Email"
                                         pattern='[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+[.]{1}[a-zA-Z]{2,}$'
+                                        value={email}
                                         className="form-control" />
                                     {this.state.error.email && <span className='text-danger'>{this.state.error.email}</span>}
                                 </div>
                             </div>
                         </div>
                         <div className="card-footer text-muted">
-                            <button type='submit' className="btn btn-warning">SAVE</button>
+                            <button disabled={!this.formRef.current?.checkValidity()} type='submit' className="btn btn-warning">SAVE</button>
                             <button type='reset' className="btn btn-outline-dark ml-2">RESET</button>
                         </div>
                     </form>
@@ -143,5 +156,10 @@ class RegisterForm extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        ...state.UserManagementReducer,
+    }
+}
 
-export default connect()(RegisterForm);
+export default connect(mapStateToProps)(RegisterForm);

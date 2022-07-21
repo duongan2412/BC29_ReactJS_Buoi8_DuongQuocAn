@@ -1,4 +1,4 @@
-import { ADD_USER, SELECTED_USER } from "../Type/UserManagementType";
+import { ADD_USER, SELECTED_USER, UPDATE_USER } from "../Type/UserManagementType";
 
 const DEFAULT_STATE = {
     userList: [
@@ -29,6 +29,12 @@ export const UserManagementReducer = (state = DEFAULT_STATE, { type, payload }) 
 
         case SELECTED_USER: {
             state.userSelected = payload;
+            return { ...state }
+        }
+
+        case UPDATE_USER: {
+            state.userList = state.userList.map(ele => ele.maSV === payload.maSV ? payload : ele)
+            state.userSelected = null;
             return { ...state }
         }
         default:
