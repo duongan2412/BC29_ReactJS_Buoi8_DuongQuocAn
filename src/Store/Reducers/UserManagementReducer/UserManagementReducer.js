@@ -1,14 +1,16 @@
-import { ADD_USER, SELECTED_USER, UPDATE_USER } from "../Type/UserManagementType";
+import { ADD_USER, DELETE_USER, SELECTED_USER, UPDATE_USER } from "../Type/UserManagementType";
 
 const DEFAULT_STATE = {
     userList: [
         {
+            id: 1,
             maSV: 1,
             hoTen: "Nguyen Van A",
             soDt: "0909123456",
             email: "nguyenvana@gmail.com",
         },
         {
+            id: 2,
             maSV: 2,
             hoTen: "Nguyen Van B",
             soDt: "09063214531",
@@ -22,7 +24,8 @@ export const UserManagementReducer = (state = DEFAULT_STATE, { type, payload }) 
     switch (type) {
 
         case ADD_USER: {
-            let data = [...state.userList, payload];
+            const data = [...state.userList];
+            data.push({ ...payload, id: Date.now() })
             state.userList = data;
             return { ...state }
         }
@@ -33,8 +36,13 @@ export const UserManagementReducer = (state = DEFAULT_STATE, { type, payload }) 
         }
 
         case UPDATE_USER: {
-            state.userList = state.userList.map(ele => ele.maSV === payload.maSV ? payload : ele)
+            state.userList = state.userList.map(ele => ele.id === payload.id ? payload : ele)
             state.userSelected = null;
+            return { ...state }
+        }
+
+        case DELETE_USER: {
+            state.userList = state.userList.filter(ele => ele.id !== payload)
             return { ...state }
         }
         default:

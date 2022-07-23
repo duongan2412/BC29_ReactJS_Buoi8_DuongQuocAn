@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { addUserAction, updateUserAction } from '../../Store/Reducers/Action/UserManagementAction';
 
 const DEFAULT_VALUES = {
+    id: "",
     maSV: "",
     hoTen: "",
     soDt: "",
@@ -13,6 +14,7 @@ class RegisterForm extends Component {
     state = {
         values: DEFAULT_VALUES,
         error: {
+            id: "",
             maSV: "",
             hoTen: "",
             soDt: "",
@@ -24,7 +26,7 @@ class RegisterForm extends Component {
 
     static getDerivedStateFromProps(nextProps, currentState) {
 
-        if (nextProps.userSelected && currentState.values.maSV !== nextProps.userSelected.maSV) {
+        if (nextProps.userSelected && currentState.values.id !== nextProps.userSelected.id) {
             currentState.values = nextProps.userSelected;
         }
         return currentState
@@ -124,6 +126,7 @@ class RegisterForm extends Component {
                                         onBlur={this.handleBlur}
                                         required
                                         title="Số điện thoại"
+                                        pattern='^[0-9]*$'
                                         value={soDt}
                                         className="form-control" />
                                     {this.state.error.soDt && <span className='text-danger'>{this.state.error.soDt}</span>}
@@ -147,7 +150,11 @@ class RegisterForm extends Component {
                         </div>
                         <div className="card-footer text-muted">
                             <button disabled={!this.formRef.current?.checkValidity()} type='submit' className="btn btn-warning">SAVE</button>
-                            <button type='reset' className="btn btn-outline-dark ml-2">RESET</button>
+                            <button type='reset' onClick={() => {
+                                this.setState({
+                                    values: DEFAULT_VALUES
+                                })
+                            }} className="btn btn-outline-dark ml-2">RESET</button>
                         </div>
                     </form>
                 </div>

@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectedUserAction } from '../../Store/Reducers/Action/UserManagementAction';
+import { selectedUserAction, deleteUserAction } from '../../Store/Reducers/Action/UserManagementAction';
 
 
 class UserData extends Component {
+    state = {
+        keyword: ""
+    }
+
     renderDanhSachSV = () => {
 
-        return this.props.userList.map((ele, idx) => {
-            const { maSV, hoTen, soDt, email } = ele;
+        let data = this.props.userList.filter(ele => {
+            return ele.hoTen.toLowerCase().trim().indexOf(this.state.keyword.toLowerCase().trim()) !== - 1
+        })
+
+        return data.map((ele) => {
+            const { id, maSV, hoTen, soDt, email } = ele;
             return (
-                <tr key={idx} className=''>
+                <tr key={id} className=''>
                     <td>{maSV}</td>
                     <td>{hoTen}</td>
                     <td>{soDt}</td>
@@ -17,12 +25,21 @@ class UserData extends Component {
                     <td>
                         <button onClick={() => this.props.dispatch(selectedUserAction(ele))}
                             className="btn btn-info mr-2">EDIT</button>
-                        <button className="btn btn-danger">DELETE</button>
+                        <button onClick={() => this.props.dispatch(deleteUserAction(id))}
+                            className="btn btn-danger">DELETE</button>
                     </td>
                 </tr>
             )
         })
     }
+
+    handleChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({
+            [name]: value
+        })
+    }
+
     render() {
         return (
             <div className="card p-0 mt-3">
@@ -32,8 +49,10 @@ class UserData extends Component {
                         <div className="form-group mb-0">
                             <input
                                 type="text"
-                                placeholder="Search by full name..."
+                                placeholder="Tìm theo tên sinh viên ....."
                                 className="form-control"
+                                onChange={this.handleChange}
+                                name="keyword"
                             />
                         </div>
                     </div>
